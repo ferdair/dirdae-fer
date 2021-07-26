@@ -15,7 +15,7 @@ export function auth0HandleAuthentication(context) {
       localStorage.setItem("id_token", authResult.idToken);
       localStorage.setItem("expires_at", expiresAt);
 
-      this.$router.replace("/admin");
+      this.$router.replace("/proyecto");
     } else if (err) {
       alert("login failed. Error #KJN838");
       this.$router.replace("/");

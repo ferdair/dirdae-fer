@@ -62,13 +62,37 @@ const menuList = [
     icon: "home",
     label: "Inicio",
     separator: true,
-    redirectTo: "/admin",
+    redirectTo: "/proyecto",
   },
   {
     icon: "engineering",
     label: "Personal",
     separator: true,
     redirectTo: "/personal",
+  },
+  {
+    icon: "label",
+    label: "Aplicaciones",
+    separator: true,
+    redirectTo: "/aplicacion",
+  },
+  {
+    icon: "bookmarks",
+    label: "Capacidades Generiacas",
+    separator: true,
+    redirectTo: "/capacidadesgenericas",
+  },
+  {
+    icon: "label_important",
+    label: "Lineas de Investigación",
+    separator: true,
+    redirectTo: "/lineasinvestigacion",
+  },
+  {
+    icon: "more",
+    label: "Unidades Beneficiarias",
+    separator: true,
+    redirectTo: "/unidadbeneficiaria",
   },
 ];
 

@@ -21,8 +21,8 @@ export default route(function ({ store /*, ssrContext*/ }) {
   const createHistory = process.env.SERVER
     ? createMemoryHistory
     : process.env.VUE_ROUTER_MODE === "history"
-    ? createWebHistory
-    : createWebHashHistory;
+      ? createWebHistory
+      : createWebHashHistory;
 
   const Router = createRouter({
     scrollBehavior: () => ({ left: 0, top: 0 }),
@@ -81,43 +81,44 @@ export default route(function ({ store /*, ssrContext*/ }) {
   }); */
 
   Router.beforeEach((to, from, next) => {
-    // Allow finishing callback url for logging in
+    // Permite salir del callbackurl para logearse
     if (to.matched.some((record) => record.path == "/auth0callback")) {
       console.log("router.beforeEach found /auth0callback url");
       store.dispatch("auth/auth0HandleAuthentication");
       next(false);
     }
 
-    // check if user is logged in (start assuming the user is not logged in = false)
+    // verificar si el usuario está loggeado, asuminos que no lo está =false
     let routerAuthCheck = false;
-    // Verify all the proper access variables are present for proper authorization
+
+    // Verifico si están todas las variables de accesa para la autorización
     if (
       localStorage.getItem("access_token") &&
       localStorage.getItem("id_token") &&
       localStorage.getItem("expires_at")
     ) {
       console.log("found local storage tokens");
-      // Check whether the current time is past the Access Token's expiry time
+      // Verifico que el token no esté caducado
       let expiresAt = JSON.parse(localStorage.getItem("expires_at"));
       // set localAuthTokenCheck true if unexpired / false if expired
       routerAuthCheck = new Date().getTime() < expiresAt;
     }
 
-    // set global ui understanding of authentication
+    // Setea el estado de la autenticacion
     store.commit("auth/setUserIsAuthenticated", routerAuthCheck);
 
-    // check if the route to be accessed requires authorizaton
+    // Verifica si la ruta a la que deseamos acceder requiere autenticacion
     if (to.matched.some((record) => record.meta.requiresAuth)) {
-      // Check if user is Authenticated
+      // Verifica si el usuario está autenticado
       if (routerAuthCheck) {
-        // user is Authenticated - allow access
+        // Está Autenticado - permite accesso
         next();
       } else {
-        // user is not authenticated - redirect to login
-        router.replace("/login");
+        // usuario no autenticado - redirect a login
+        Router.replace("/");
       }
     }
-    // Allow page to load
+    // Permite cargar a la pagina
     else {
       next();
     }
