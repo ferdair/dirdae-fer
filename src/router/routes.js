@@ -65,6 +65,12 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: "/unidadbeneficiaria/create",
+    component: () => import("layouts/AdminLayout.vue"),
+    children: [{ path: "", component: () => import("pages/NuevoDetalle.vue") }],
+    meta: { requiresAuth: true, tipo: 2 },
+  },
+  {
     path: "/capacidadesgenericas",
     component: () => import("layouts/AdminLayout.vue"),
     children: [
@@ -73,12 +79,24 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: "/capacidadesgenericas/create",
+    component: () => import("layouts/AdminLayout.vue"),
+    children: [{ path: "", component: () => import("pages/NuevoDetalle.vue") }],
+    meta: { requiresAuth: true, tipo: 3 },
+  },
+  {
     path: "/lineasinvestigacion",
     component: () => import("layouts/AdminLayout.vue"),
     children: [
       { path: "", component: () => import("pages/LineasInvestigacion.vue") },
     ],
     meta: { requiresAuth: true },
+  },
+  {
+    path: "/lineasinvestigacion/create",
+    component: () => import("layouts/AdminLayout.vue"),
+    children: [{ path: "", component: () => import("pages/NuevoDetalle.vue") }],
+    meta: { requiresAuth: true, tipo: 4 },
   },
   {
     path: "/aplicacion",
@@ -90,6 +108,12 @@ const routes = [
     path: "/aplicacion/create",
     component: () => import("layouts/AdminLayout.vue"),
     children: [{ path: "", component: () => import("pages/NuevoDetalle.vue") }],
+    meta: { requiresAuth: true, tipo: 6 },
+  },
+  {
+    path: "/reporte/:id",
+    component: () => import("layouts/AdminLayout.vue"),
+    children: [{ path: "", component: () => import("pages/Reporte.vue") }],
     meta: { requiresAuth: true },
   },
   // Always leave this as last one,

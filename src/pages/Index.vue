@@ -24,7 +24,11 @@
         />
       </div>
       <div class="col-md-4 col-sm-12">
-        <q-input outlined v-model="busqueda" @update:model-value="getProyectoByNombre()">
+        <q-input
+          outlined
+          v-model="busqueda"
+          @update:model-value="getProyectoByNombre()"
+        >
           <template v-slot:append>
             <q-icon name="search" />
           </template>
@@ -36,13 +40,34 @@
         <!--  <q-table class="my-sticky-header-table" title="Treats" :rows="proyectos"
         :columns="columnas" flat bordered @row-click:"onRowClick" row-key="id" /> -->
         <q-table
-          title="Treats"
-          dense
+          title="Proyectos"
           :rows="proyectos"
           :columns="columnas"
-          row-key="id"
+          row-key="id "
+          class="my-sticky-column-table"
           @row-click="onRowClick"
-        />
+        >
+          <template v-slot:body-cell-actions="props">
+            <q-td :props="props">
+              <q-btn
+                dense
+                round
+                flat
+                color="grey"
+                icon="edit"
+                @click.stop="editarProyecto(props)"
+              ></q-btn>
+              <q-btn
+                dense
+                round
+                flat
+                color="grey"
+                icon="delete"
+                @click.stop=""
+              ></q-btn>
+            </q-td>
+          </template>
+        </q-table>
       </div>
     </div>
   </div>
@@ -50,13 +75,21 @@
 
 <script>
 import { defineComponent } from "vue";
-import { useQuery } from "@vue/apollo-composable";
-import gql from "graphql-tag";
 import axios from "axios";
+import { useQuasar } from "quasar";
+import { computed } from "vue";
 const apiUrl = require("../graphql/constants").apiUrl;
 const queries = require("../graphql/constants").queries;
 export default defineComponent({
   name: "PageIndex",
+  setup() {
+    const $q = useQuasar();
+    const buttonColor = computed(() => {
+      return $q.screen.lt.md ? "primary" : "secondary";
+    });
+
+    return { buttonColor };
+  },
   data: () => ({
     cargando: false,
     tipoProyecto: { idDetalle: 40, nombreDetalle: "Proyecto" },
@@ -91,6 +124,7 @@ export default defineComponent({
         format: (val) => `${val}`,
         sortable: true,
       },
+      { name: "actions", label: "Actions", field: "", align: "center" },
     ],
   }),
   async created() {
@@ -153,10 +187,12 @@ export default defineComponent({
       });
       this.proyectos = Proyecto;
     },
-
+    editarProyecto(props) {
+      this.$router.push({ path: `/proyecto/${props.row.idProyecto}` });
+    },
     onRowClick(evt, row) {
       console.log("clicked on", row.idProyecto);
-      this.$router.push({ path: `/proyecto/${row.idProyecto}` });
+      this.$router.push({ path: `/reporte/${row.idProyecto}` });
     },
   },
 });

@@ -2,7 +2,13 @@
   <div class="q-pa-md">
     <div class="row justify-between">
       <div class="col-md-6 col-sm-12">
-        <q-btn color="white" text-color="black" size="lg" label="Nuevo" />
+        <q-btn
+          color="white"
+          text-color="black"
+          size="lg"
+          label="Nuevo"
+          to="/unidadbeneficiaria/create"
+        />
       </div>
       <div class="col-md-6 col-sm-12">
         <q-input outlined v-model="busqueda">

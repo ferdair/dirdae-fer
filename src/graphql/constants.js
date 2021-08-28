@@ -92,6 +92,14 @@ module.exports = {
       }
     }
     `,
+    getLineasEspecificas: `query MyQuery {
+      Detalle(where: {TipoDetalle: {idTipoDetalle: {_eq: 9}}}) {
+        idDetalle
+        nombreDetalle
+        relacionDetalle
+      }
+    }
+    `,
     getAplicaciones: `query MyQuery {
       Detalle(where: {TipoDetalle: {idTipoDetalle: {_eq: 6}}}) {
         idDetalle
@@ -146,6 +154,11 @@ module.exports = {
           nombreDetalle
           tipoDetalle
         }
+        LineaEspecificaInvestigacion {
+          idDetalle
+          nombreDetalle
+          tipoDetalle
+        }
       }
     }
     `,
@@ -160,7 +173,7 @@ module.exports = {
       }
     }
     `,
-    getPersonal: `query MyQuery {
+    getPersonalDesarrollador: `query MyQuery {
       Personal(where: {es_jefe: {_eq: false}}) {
         idPersonal
         rango
@@ -245,5 +258,41 @@ module.exports = {
       }
     }
     `,
+    updatePersonalByPk: `mutation MyMutation($idPersonal: Int!, $_set: Personal_set_input) {
+      update_Personal_by_pk(pk_columns: {idPersonal: $idPersonal}, _set: $_set) {
+        idPersonal
+        nombre
+      }
+    }`,
+    updateProyecyoByPk: `mutation MyMutation($idProyecto: Int!, $_set: Proyecto_set_input) {
+      update_Proyecto_by_pk(pk_columns: {idProyecto: $idProyecto}, _set: $_set) {
+        idProyecto
+      }
+    }
+    `,
+    updateCriterioPrioridadByPk: `mutation MyMutation($idCriterioPrioridad: Int!, $_set: CriterioPrioridad_set_input = {}) {
+      update_CriterioPrioridad_by_pk(pk_columns: {idCriterioPrioridad: $idCriterioPrioridad}, _set: $_set) {
+        idCriterioPrioridad
+        suma
+      }
+    }
+    `,
+    updateFaseByPk: `mutation MyMutation($idFase: Int!, $_set: Fase_set_input, $_set1: Fase_set_input = {}) {
+      update_Fase_by_pk(pk_columns: {idFase: $idFase}, _set: $_set) {
+        idFase
+        idProyecto
+      }
+    }
+    `,
+    deleteDesarrolladoresByProyecto: `mutation MyMutation($_eq: Int) {
+      delete_Desarrollador(where: {idProyecto: {_eq: $_eq}}) {
+        affected_rows
+      }
+    }`,
+    deleteFasesByProyecto: `mutation MyMutation($_eq: Int) {
+      delete_Fase(where: {idProyecto: {_eq: $_eq}}) {
+        affected_rows
+      }
+    }`,
   },
 };

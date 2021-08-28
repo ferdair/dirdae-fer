@@ -8,7 +8,12 @@
     <q-stepper v-model="step" header-nav ref="stepper" color="primary" animated>
       <q-step :name="1" title="Proyecto" icon="settings" :done="done1">
         <q-input outlined v-model="nombre" label="nombre" :readonly="!editar" />
-        <q-input outlined v-model="descripcion" label="descripción" :readonly="!editar" />
+        <q-input
+          outlined
+          v-model="descripcion"
+          label="descripción"
+          :readonly="!editar"
+        />
 
         <q-select
           square
@@ -53,12 +58,13 @@
           option-label="nombreDetalle"
           autofocus
           :readonly="!editar"
+          @update:model-value="filtrarLineas"
         />
         <q-select
           square
           outlined
-          v-model="lineaInvestigacion"
-          :options="lineasInvestigacion"
+          v-model="lineaEspecifica"
+          :options="lineasEspecificasFilt"
           label="Linea especifica"
           option-value="idDetalle"
           option-label="nombreDetalle"
@@ -88,7 +94,7 @@
           option-label="nombreDetalle"
           autofocus
         /> -->
-
+        <!-- Cambiar el evento -->
         <q-stepper-navigation>
           <q-btn
             @click="
@@ -117,7 +123,10 @@
           label="Requerimiento Operativo"
           min="0"
           max="5"
-          :rules="[(val) => (val >= 0 && val <= 5) || 'El valor debe estar entre 0 y 5']"
+          :rules="[
+            (val) =>
+              (val >= 0 && val <= 5) || 'El valor debe estar entre 0 y 5',
+          ]"
           @update:model-value="sumar()"
           :readonly="!editar"
         />
@@ -128,7 +137,10 @@
           label="Sostenimiento Log A-29"
           min="0"
           max="5"
-          :rules="[(val) => (val >= 0 && val <= 5) || 'El valor debe estar entre 0 y 5']"
+          :rules="[
+            (val) =>
+              (val >= 0 && val <= 5) || 'El valor debe estar entre 0 y 5',
+          ]"
           @update:model-value="sumar()"
           :readonly="!editar"
         />
@@ -139,7 +151,10 @@
           label="Sostenimiento DA-20"
           min="0"
           max="5"
-          :rules="[(val) => (val >= 0 && val <= 5) || 'El valor debe estar entre 0 y 5']"
+          :rules="[
+            (val) =>
+              (val >= 0 && val <= 5) || 'El valor debe estar entre 0 y 5',
+          ]"
           @update:model-value="sumar()"
           :readonly="!editar"
         />
@@ -150,7 +165,10 @@
           label="Aporte Lineas Investigación"
           min="0"
           max="5"
-          :rules="[(val) => (val >= 0 && val <= 5) || 'El valor debe estar entre 0 y 5']"
+          :rules="[
+            (val) =>
+              (val >= 0 && val <= 5) || 'El valor debe estar entre 0 y 5',
+          ]"
           @update:model-value="sumar()"
           :readonly="!editar"
         />
@@ -161,7 +179,10 @@
           label="Criterio del Director"
           min="0"
           max="3"
-          :rules="[(val) => (val >= 0 && val <= 3) || 'El valor debe estar entre 0 y 3']"
+          :rules="[
+            (val) =>
+              (val >= 0 && val <= 3) || 'El valor debe estar entre 0 y 3',
+          ]"
           @update:model-value="sumar()"
           :readonly="!editar"
         />
@@ -173,7 +194,10 @@
           label="Dispone de Presupuesto"
           min="0"
           max="5"
-          :rules="[(val) => (val >= 0 && val <= 5) || 'El valor debe estar entre 0 y 5']"
+          :rules="[
+            (val) =>
+              (val >= 0 && val <= 5) || 'El valor debe estar entre 0 y 5',
+          ]"
           @update:model-value="sumar()"
           :readonly="!editar"
         />
@@ -195,14 +219,31 @@
             color="primary"
             label="Siguiente"
           />
-          <q-btn flat @click="step = 1" color="primary" label="Atrás" class="q-ml-sm" />
+          <q-btn
+            flat
+            @click="step = 1"
+            color="primary"
+            label="Atrás"
+            class="q-ml-sm"
+          />
         </q-stepper-navigation>
       </q-step>
 
       <q-step :name="3" title="Desarrolladores" icon="person_add" :done="done3">
+        <q-select
+          square
+          filled
+          v-model="nuevoDesarrollador"
+          :options="personal"
+          label="Desarrollador"
+          option-value="idPersonal"
+          option-label="nombre"
+          autofocus
+          @update:model-value="agregarDesarrollador"
+        />
         <q-list bordered>
           <q-item
-            v-for="desarrollador in desarrolladores"
+            v-for="(desarrollador, index) in desarrolladores"
             :key="desarrollador.idDesarrollador"
           >
             <q-item-section avatar top>
@@ -214,7 +255,13 @@
               <q-item-label>{{ desarrollador.Personal.nombre }}</q-item-label>
             </q-item-section>
             <q-item-section side>
-              <q-btn flat round color="primary" icon="delete" />
+              <q-btn
+                flat
+                round
+                color="primary"
+                icon="delete"
+                @click="quitarDesarrollador(index)"
+              />
             </q-item-section>
           </q-item>
         </q-list>
@@ -229,27 +276,55 @@
             color="primary"
             label="Continue"
           />
-          <q-btn flat @click="step = 2" color="primary" label="Atrás" class="q-ml-sm" />
+          <q-btn
+            flat
+            @click="step = 3"
+            color="primary"
+            label="Atrás"
+            class="q-ml-sm"
+          />
         </q-stepper-navigation>
       </q-step>
       <q-step :name="4" title="Fases" icon="checklist" :done="done4">
+        <q-input
+          outlined
+          v-model="nuevaFase.tituloFase"
+          label="Nombre"
+          :rules="[(val) => !!val || 'Nombre de la fase es requerido']"
+        />
+        <q-input
+          v-model="nuevaFase.fechaInicio"
+          filled
+          type="date"
+          label="Fecha de Inicio"
+        />
+        <q-input
+          v-model="nuevaFase.fechaFin"
+          filled
+          type="date"
+          label="Fecha de Fin"
+        />
+        <q-input
+          v-model="nuevaFase.fechaFinReal"
+          filled
+          type="date"
+          label="Fecha de Fin Real"
+        />
+        <q-input
+          filled
+          v-model="nuevaFase.presupuesto"
+          label="Presupuesto"
+          mask="#.##"
+          fill-mask="#"
+          reverse-fill-mask
+          input-class="text-right"
+          prefix="$"
+        />
+        <q-btn @click="agregarFase" color="primary" label="Agregar" />
         <q-list bordered>
-          <!-- <q-item v-for="(fase, index) in fases" :key="fase.idFase">
-            <q-item-section avatar top>
-              <q-avatar color="primary" text-color="white">
-                {{ index }}
-              </q-avatar>
-            </q-item-section>
-            <q-item-section cli>
-              <q-item-label>{{ fase.tituloFase }}</q-item-label>
-            </q-item-section>
-            <q-item-section side>
-              <q-btn flat round color="primary" icon="delete" />
-            </q-item-section>
-          </q-item> -->
           <q-expansion-item
-            v-for="fase in fases"
-            :key="fase.idFase"
+            v-for="(fase, index) in fases"
+            :key="index"
             expand-separator
             icon="pending_actions"
             :label="fase.tituloFase"
@@ -261,21 +336,18 @@
                   filled
                   type="date"
                   label="Fecha de Inicio"
-                  :readonly="!editar"
                 />
                 <q-input
                   v-model="fase.fechaFin"
                   filled
                   type="date"
                   label="Fecha de Fin"
-                  :readonly="!editar"
                 />
                 <q-input
                   v-model="fase.fechaFinReal"
                   filled
                   type="date"
                   label="Fecha de Fin Real"
-                  :readonly="!editar"
                 />
                 <q-input
                   filled
@@ -286,47 +358,45 @@
                   reverse-fill-mask
                   input-class="text-right"
                   prefix="$"
-                  :readonly="!editar"
                 />
-                <q-list bordered :header-inset-level="1">
-                  <q-item v-for="retraso in fase.CausaRetrasos" :key="retraso.idRetraso">
-                    <q-item-section avatar top>
-                      <q-avatar color="primary" text-color="white">{{
-                        retraso.idRetraso
-                      }}</q-avatar>
-                    </q-item-section>
-                    <q-item-section cli>
-                      <q-item-label>{{ retraso.descripcion }}</q-item-label>
-                      <q-item-label caption lines="1">{{
-                        retraso.TipoCausa.nombreDetalle
-                      }}</q-item-label>
-                    </q-item-section>
-                    <q-item-section side>
-                      <q-btn flat round color="primary" icon="delete" />
-                    </q-item-section>
-                  </q-item>
-                </q-list>
+                <q-item-section side>
+                  <q-btn
+                    flat
+                    round
+                    color="primary"
+                    icon="delete"
+                    @click="quitarFase(index)"
+                  />
+                </q-item-section>
               </q-card-section>
             </q-card>
           </q-expansion-item>
         </q-list>
         <q-stepper-navigation>
           <q-btn color="primary" @click="done4 = true" label="Guardar" />
-          <q-btn flat @click="step = 3" color="primary" label="Atrás" class="q-ml-sm" />
+          <q-btn
+            flat
+            @click="step = 3"
+            color="primary"
+            label="Atrás"
+            class="q-ml-sm"
+          />
         </q-stepper-navigation>
       </q-step>
     </q-stepper>
+    <q-btn color="primary" @click="updateProyecto()" label="Guardar" />
   </div>
 </template>
 
 <script>
 import { defineComponent } from "vue";
 import axios from "axios";
+import { mutations } from "../graphql/constants";
 const apiUrl = require("../graphql/constants").apiUrl;
 const queries = require("../graphql/constants").queries;
 export default defineComponent({
   name: "PageIndex",
-  setup: () => ({}),
+
   data: () => ({
     idPr: 0,
     nombre: "",
@@ -349,13 +419,27 @@ export default defineComponent({
     jefesProyectos: [],
     lineaInvestigacion: "",
     lineasInvestigacion: [],
+    lineaEspecifica: "",
+    lineasEspecificas: [],
+    lineasEspecificasFilt: [],
     unidadBeneficiaria: "",
     unidadesBeneficiarias: [],
     tipoProyecto: { idDetalle: 41, nombreDetalle: "Concurso de Ingenios" },
     tiposProyectos: [],
+    nuevoDesarrollador: [],
+    personal: [],
     desarrolladores: [],
+    desarrolladoresOriginal: [],
     fases: [],
+    nuevaFase: {
+      tituloFase: null,
+      fechaFin: null,
+      fechaFinReal: null,
+      fechaInicio: null,
+      presupuesto: null,
+    },
     retrasos: [],
+
     step: 1,
     done1: false,
     done2: false,
@@ -374,9 +458,30 @@ export default defineComponent({
     this.getProyectoById(this.idPr);
     this.getDesarrolladoresByIdProyecto(this.idPr);
     this.getFasesByIdProyecto(this.idPr);
+    this.getLineasEspecificas();
+    this.getPersonal();
   },
 
   methods: {
+    agregarDesarrollador() {
+      const val = this.desarrolladores.some(
+        (des) => des.Personal.idPersonal === this.nuevoDesarrollador.idPersonal
+      );
+
+      if (val === true) {
+        alert("Esta persona ya es parte del proyecto");
+        this.nuevoDesarrollador = null;
+      } else {
+        this.desarrolladores.splice(0, 0, {
+          idDesarrollador: null,
+          Personal: this.nuevoDesarrollador,
+        });
+        this.nuevoDesarrollador = null;
+      }
+    },
+    quitarDesarrollador(index) {
+      this.desarrolladores.splice(index, 1);
+    },
     async getProyectoById(ide) {
       const {
         data: {
@@ -393,6 +498,7 @@ export default defineComponent({
       this.criterioPrioridad = Proyecto[0].CriterioPrioridad;
       this.jefeProyecto = Proyecto[0].JefeProyecto;
       this.lineaInvestigacion = Proyecto[0].LineasInvestigacion;
+      this.lineaEspecifica = Proyecto[0].LineaEspecificaInvestigacion;
       this.tipoProyecto = Proyecto[0].TipoProyecto;
       this.unidadBeneficiaria = Proyecto[0].UnidadBeneficiaria;
     },
@@ -432,7 +538,14 @@ export default defineComponent({
       } = await axios.post(apiUrl, { query: queries.getLineasInvestigacion });
       this.lineasInvestigacion = Detalle;
     },
-
+    async getLineasEspecificas() {
+      const {
+        data: {
+          data: { Detalle },
+        },
+      } = await axios.post(apiUrl, { query: queries.getLineasEspecificas });
+      this.lineasEspecificas = Detalle;
+    },
     async getTipoProyecto() {
       const {
         data: {
@@ -459,8 +572,8 @@ export default defineComponent({
         query: queries.getDesarrolladoresByIdProyecto,
         variables: { _id: ide },
       });
-      this.desarrolladores = Desarrollador;
-      console.log(Desarrollador);
+      this.desarrolladores = JSON.parse(JSON.stringify(Desarrollador));
+      this.desarrolladoresOriginal = JSON.parse(JSON.stringify(Desarrollador));
     },
     async getFasesByIdProyecto(ide) {
       const {
@@ -486,6 +599,143 @@ export default defineComponent({
         this.criterioPrioridad.aporteLineasInvestigativo +
         this.criterioPrioridad.criteriodelDirector +
         this.criterioPrioridad.disponedePresupuesto;
+    },
+    async getPersonal() {
+      const {
+        data: {
+          data: { Personal },
+        },
+      } = await axios.post(apiUrl, { query: queries.getPersonalDesarrollador });
+      this.personal = Personal;
+    },
+    async updateProyecto() {
+      const py = {
+        idProyecto: Number(this.idPr),
+        _set: {
+          nombreProyecto: this.nombre,
+          descripcionProyecto: this.descripcion,
+          criteriosPrioridad: this.criterioPrioridad.idCriterioPrioridad,
+          aplicacion:
+            this.aplicacion === undefined ? null : this.aplicacion.idDetalle,
+          capacidadesGenericas: this.capacidadGenerica.idDetalle,
+          jefeProyecto: this.jefeProyecto.idPersonal,
+          lineasInvestigacion: this.lineaInvestigacion.idDetalle,
+          lineaEspecificaInvestigacion: this.lineaEspecifica.idDetalle,
+          tipoProyecto: this.tipoProyecto.idDetalle,
+          unidadBeneficiaria: this.unidadBeneficiaria.idDetalle,
+        },
+      };
+
+      let r = await axios.post(apiUrl, {
+        query: mutations.updateProyecyoByPk,
+        variables: { idProyecto: py.idProyecto, _set: py._set },
+      });
+
+      this.updateCriterioPrioridad();
+      this.updateDesarrolladores();
+      this.updateFases();
+      this.$router.push({ path: `/proyecto` });
+    },
+    async updateCriterioPrioridad() {
+      const cp = {
+        idCriterioPrioridad: this.criterioPrioridad.idCriterioPrioridad,
+        _set: this.criterioPrioridad,
+      };
+
+      let r = await axios.post(apiUrl, {
+        query: mutations.updateCriterioPrioridadByPk,
+        variables: {
+          idCriterioPrioridad: cp.idCriterioPrioridad,
+          _set: cp._set,
+        },
+      });
+    },
+    async updateDesarrolladores() {
+      let del = await axios.post(apiUrl, {
+        query: mutations.deleteDesarrolladoresByProyecto,
+        variables: {
+          _eq: this.idPr,
+        },
+      });
+
+      let des = [];
+      this.desarrolladores.forEach((desarrollador) => {
+        des.push({
+          idPersonal: desarrollador.Personal.idPersonal,
+          idProyecto: this.idPr,
+        });
+      });
+
+      const ad = await axios.post(apiUrl, {
+        query: mutations.insertDesarrollador,
+        variables: { objects: des },
+      });
+    },
+    async updateFases() {
+      /* this.fases.forEach(async (fase) => {
+        let fs = {
+          idFase: fase.idFase,
+          _set: {
+            tituloFase: fase.tituloFase,
+            fechaInicio: fase.fechaInicio,
+            fechaFin: fase.fechaFin,
+            fechaFinReal: fase.fechaFinReal,
+            presupuesto: fase.presupuesto,
+          },
+        };
+        let r = await axios.post(apiUrl, {
+          query: mutations.updateFaseByPk,
+          variables: { idFase: fs.idFase, _set: fs._set },
+        });
+      }); */
+
+      let del = await axios.post(apiUrl, {
+        query: mutations.deleteFasesByProyecto,
+        variables: {
+          _eq: this.idPr,
+        },
+      });
+
+      let fas = [];
+
+      this.fases.forEach((fase) => {
+        fas.push({
+          idProyecto: this.idPr,
+          tituloFase: fase.tituloFase,
+          fechaInicio: fase.fechaInicio,
+          fechaFin: fase.fechaFin,
+          fechaFinReal: fase.fechaFinReal,
+          presupuesto: fase.presupuesto,
+        });
+      });
+
+      const {
+        data: {
+          data: { insert_Fase },
+        },
+      } = await axios.post(apiUrl, {
+        query: mutations.insertFase,
+        variables: { objects: fas },
+      });
+    },
+    agregarFase() {
+      this.fases.push(this.nuevaFase);
+      this.nuevaFase = {
+        tituloFase: null,
+        fechaFin: null,
+        fechaFinReal: null,
+        fechaInicio: null,
+        presupuesto: null,
+      };
+    },
+    quitarFase(ide) {
+      this.fases.splice(ide, 1);
+    },
+    filtrarLineas() {
+      this.lineaEspecifica = null;
+      this.lineasEspecificasFilt = this.lineasEspecificas.filter(
+        (a) => a.relacionDetalle === this.lineaInvestigacion.idDetalle
+      );
     },
   },
 });

@@ -8,7 +8,12 @@
           label="Nombre"
           :rules="[(val) => !!val || 'Nombre del proyecto es requerido']"
         />
-        <q-input outlined v-model="descripcion" label="Descripción" type="textarea" />
+        <q-input
+          outlined
+          v-model="descripcion"
+          label="Descripción"
+          type="textarea"
+        />
         <q-select
           square
           outlined
@@ -69,13 +74,15 @@
         <q-select
           square
           outlined
-          v-model="lineaInvestigacion"
-          :options="lineasInvestigacion"
+          v-model="lineaEspecifica"
+          :options="lineasEspecificas"
           label="Linea especifica"
           option-value="idDetalle"
           option-label="nombreDetalle"
           autofocus
-          :rules="[(val) => !!val || 'Línea específica de investigación es requerido']"
+          :rules="[
+            (val) => !!val || 'Línea específica de investigación es requerido',
+          ]"
         />
         <q-select
           v-if="tipoProyecto.idDetalle === 41"
@@ -118,7 +125,10 @@
           label="Requerimiento Operativo"
           min="0"
           max="5"
-          :rules="[(val) => (val >= 0 && val <= 5) || 'El valor debe estar entre 0 y 5']"
+          :rules="[
+            (val) =>
+              (val >= 0 && val <= 5) || 'El valor debe estar entre 0 y 5',
+          ]"
           @update:model-value="sumar()"
         />
         <q-input
@@ -128,7 +138,10 @@
           label="Sostenimiento Log A-29"
           min="0"
           max="5"
-          :rules="[(val) => (val >= 0 && val <= 5) || 'El valor debe estar entre 0 y 5']"
+          :rules="[
+            (val) =>
+              (val >= 0 && val <= 5) || 'El valor debe estar entre 0 y 5',
+          ]"
           @update:model-value="sumar()"
         />
         <q-input
@@ -138,7 +151,10 @@
           label="Sostenimiento DA-20"
           min="0"
           max="5"
-          :rules="[(val) => (val >= 0 && val <= 5) || 'El valor debe estar entre 0 y 5']"
+          :rules="[
+            (val) =>
+              (val >= 0 && val <= 5) || 'El valor debe estar entre 0 y 5',
+          ]"
           @update:model-value="sumar()"
         />
         <q-input
@@ -148,7 +164,10 @@
           label="Aporte Lineas Investigación"
           min="0"
           max="5"
-          :rules="[(val) => (val >= 0 && val <= 5) || 'El valor debe estar entre 0 y 5']"
+          :rules="[
+            (val) =>
+              (val >= 0 && val <= 5) || 'El valor debe estar entre 0 y 5',
+          ]"
           @update:model-value="sumar()"
         />
         <q-input
@@ -158,7 +177,10 @@
           label="Criterio del Director"
           min="0"
           max="3"
-          :rules="[(val) => (val >= 0 && val <= 3) || 'El valor debe estar entre 0 y 3']"
+          :rules="[
+            (val) =>
+              (val >= 0 && val <= 3) || 'El valor debe estar entre 0 y 3',
+          ]"
           @update:model-value="sumar()"
         />
 
@@ -169,7 +191,10 @@
           label="Dispone de Presupuesto"
           min="0"
           max="5"
-          :rules="[(val) => (val >= 0 && val <= 5) || 'El valor debe estar entre 0 y 5']"
+          :rules="[
+            (val) =>
+              (val >= 0 && val <= 5) || 'El valor debe estar entre 0 y 5',
+          ]"
           @update:model-value="sumar()"
         />
         <q-input
@@ -190,7 +215,13 @@
             color="primary"
             label="Siguiente"
           />
-          <q-btn flat @click="step = 1" color="primary" label="Atrás" class="q-ml-sm" />
+          <q-btn
+            flat
+            @click="step = 1"
+            color="primary"
+            label="Atrás"
+            class="q-ml-sm"
+          />
         </q-stepper-navigation>
       </q-step>
 
@@ -227,9 +258,14 @@
           @update:model-value="agregarDesarrollador"
         />
         <q-list bordered>
-          <q-item v-for="(desarrollador, index) in desarrolladores" :key="index">
+          <q-item
+            v-for="(desarrollador, index) in desarrolladores"
+            :key="index"
+          >
             <q-item-section avatar top>
-              <q-avatar color="primary" text-color="white">{{ index }}</q-avatar>
+              <q-avatar color="primary" text-color="white">{{
+                index
+              }}</q-avatar>
             </q-item-section>
             <q-item-section cli>
               <q-item-label>{{ desarrollador.nombre }}</q-item-label>
@@ -256,7 +292,13 @@
             color="primary"
             label="Continue"
           />
-          <q-btn flat @click="step = 2" color="primary" label="Atrás" class="q-ml-sm" />
+          <q-btn
+            flat
+            @click="step = 2"
+            color="primary"
+            label="Atrás"
+            class="q-ml-sm"
+          />
         </q-stepper-navigation>
       </q-step>
       <q-step :name="4" title="Fases" icon="checklist" :done="done4">
@@ -272,7 +314,12 @@
           type="date"
           label="Fecha de Inicio"
         />
-        <q-input v-model="nuevaFase.fechaFin" filled type="date" label="Fecha de Fin" />
+        <q-input
+          v-model="nuevaFase.fechaFin"
+          filled
+          type="date"
+          label="Fecha de Fin"
+        />
         <q-input
           v-model="nuevaFase.fechaFinReal"
           filled
@@ -343,7 +390,13 @@
         </q-list>
         <q-stepper-navigation>
           <q-btn color="primary" label="Guardar" @click="crearProyecto" />
-          <q-btn flat @click="step = 3" color="primary" label="Atrás" class="q-ml-sm" />
+          <q-btn
+            flat
+            @click="step = 3"
+            color="primary"
+            label="Atrás"
+            class="q-ml-sm"
+          />
         </q-stepper-navigation>
       </q-step>
     </q-stepper>
@@ -381,6 +434,8 @@ export default defineComponent({
     jefesProyectos: [],
     lineaInvestigacion: "",
     lineasInvestigacion: [],
+    lineaEspecifica: "",
+    lineasEspecificas: [],
     unidadBeneficiaria: "",
     unidadesBeneficiarias: [],
     tipoProyecto: { idDetalle: 41, nombreDetalle: "Concurso de Ingenios" },
@@ -411,6 +466,7 @@ export default defineComponent({
     this.getTipoProyecto();
     this.getUnidadBeneficiaria();
     this.getLineasInvestigacion();
+    this.getLineasEspecificas();
     this.getPersonal();
     /*     this.getProyectoById(this.idPr);
     this.getDesarrolladoresByIdProyecto(this.idPr);
@@ -469,7 +525,7 @@ export default defineComponent({
         data: {
           data: { Personal },
         },
-      } = await axios.post(apiUrl, { query: queries.getPersonal });
+      } = await axios.post(apiUrl, { query: queries.getPersonalDesarrollador });
       this.personal = Personal;
     },
     async getLineasInvestigacion() {
@@ -488,6 +544,15 @@ export default defineComponent({
         },
       } = await axios.post(apiUrl, { query: queries.getTipoProyecto });
       this.tiposProyectos = Detalle;
+    },
+
+    async getLineasEspecificas() {
+      const {
+        data: {
+          data: { Detalle },
+        },
+      } = await axios.post(apiUrl, { query: queries.getLineasEspecificas });
+      this.lineasEspecificas = Detalle;
     },
 
     async getUnidadBeneficiaria() {
@@ -575,12 +640,15 @@ export default defineComponent({
         jefeProyecto: this.jefeProyecto.idPersonal,
         lineasInvestigacion: this.lineaInvestigacion.idDetalle,
         aplicacion: this.aplicacion.idDetalle,
+        lineaEspecificaInvestigacion: this.lineaEspecifica.idDetalle,
         CriterioPrioridad: {
           data: {
-            aporteLineasInvestigativo: this.criterioPrioridad.aporteLineasInvestigativo,
+            aporteLineasInvestigativo:
+              this.criterioPrioridad.aporteLineasInvestigativo,
             criteriodelDirector: this.criterioPrioridad.criteriodelDirector,
             disponedePresupuesto: this.criterioPrioridad.disponedePresupuesto,
-            requerimientoOperativo: this.criterioPrioridad.requerimientoOperativo,
+            requerimientoOperativo:
+              this.criterioPrioridad.requerimientoOperativo,
             sostenimientoDA20: this.criterioPrioridad.sostenimientoDA20,
             sostenimientoLogA29: this.criterioPrioridad.sostenimientoLogA29,
             suma: this.criterioPrioridad.suma,
@@ -635,6 +703,8 @@ export default defineComponent({
         query: mutations.insertFase,
         variables: { objects: fas },
       });
+
+      this.$router.push({ path: `/proyecto` });
     },
   },
 });

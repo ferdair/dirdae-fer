@@ -68,6 +68,8 @@ export default defineComponent({
         query: mutations.insertPersonal,
         variables: { object: pe },
       });
+
+      this.$router.push({ path: `/personal` });
     },
     onRowClick(evt, row) {
       console.log("clicked on", row.idProyecto);

@@ -21,13 +21,26 @@
     <q-input outlined v-model="telefono" label="telefono" :readonly="!editar" />
 
     <q-input outlined v-model="correo" label="Correo" :readonly="!editar" />
-    <q-toggle v-model="esjefe" size="xl" label="Es jefe" left-label :readonly="!editar" />
+    <q-toggle
+      v-model="esjefe"
+      size="xl"
+      label="Es jefe"
+      left-label
+      :readonly="!editar"
+    />
+
+    <div class="row">
+      <div class="col-12">
+        <q-btn color="primary" label="Guardar" @click="editarPersonal" />
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import { defineComponent } from "vue";
 import axios from "axios";
+import { mutations } from "../graphql/constants";
 const apiUrl = require("../graphql/constants").apiUrl;
 const queries = require("../graphql/constants").queries;
 export default defineComponent({
@@ -44,7 +57,7 @@ export default defineComponent({
     editar: false,
   }),
   created() {
-    this.idP = this.$route.params.id;
+    this.idP = Number(this.$route.params.id);
     this.getRangos();
     this.getPersonalById();
   },
@@ -74,6 +87,26 @@ export default defineComponent({
       this.telefono = Personal[0].telefono;
       this.correo = Personal[0].correo;
       this.esjefe = Personal[0].es_jefe;
+    },
+    async editarPersonal() {
+      const p = {
+        idPersonal: this.idP,
+        _set: {
+          nombre: this.nombre,
+          rango: this.rango.idDetalle,
+          correo: this.correo,
+          telefono: this.telefono,
+          es_jefe: this.esjefe,
+        },
+      };
+
+      const np = await axios.post(apiUrl, {
+        query: mutations.updatePersonalByPk,
+        variables: { idPersonal: p.idPersonal, _set: p._set },
+      });
+
+      console.log(np);
+      this.$router.push({ path: `/personal` });
     },
 
     onRowClick(evt, row) {
